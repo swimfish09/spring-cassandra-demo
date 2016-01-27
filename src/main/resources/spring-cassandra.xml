@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cassandra="http://www.springframework.org/schema/data/cassandra"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/data/cassandra http://www.springframework.org/schema/data/cassandra/spring-cassandra-1.0.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	<context:property-placeholder location="classpath:cassandra.properties" />
+	<bean class="com.datastax.driver.core.PlainTextAuthProvider" id="plainTextAuthProvider">
+		<constructor-arg name="username" value="${cassandra.username}"></constructor-arg>
+		<constructor-arg name="password" value="${cassandra.password}"></constructor-arg>
+	</bean>
+	<cassandra:cluster id="cassandraCluster"
+		jmx-reporting-enabled="true" auth-info-provider-ref="plainTextAuthProvider"
+		contact-points="${cassandra.contactpoints}" port="${cassandra.port}" />
+	<cassandra:session keyspace-name="${cassandra.keyspace}"
+		cluster-ref="cassandraCluster" />
+	<cassandra:mapping entity-base-packages="com.example.pojo" />
+	<cassandra:converter />
+	<cassandra:template id="cqlTemplate" />
+	<cassandra:repositories base-package="com.example.repo" />
+</beans>
